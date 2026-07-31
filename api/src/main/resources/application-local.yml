@@ -1,0 +1,49 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+    # Local secrets (gitignored). Create api/.env — see .env.example
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:h2:file:${user.dir}/../data/h2/platform;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.platform.api: DEBUG
+    org.springframework.security: INFO
+
+app:
+  cors:
+    allowed-origins: http://localhost:5173
+  jwt:
+    secret: local-dev-only-change-me-use-long-secret-key-32b
+  session:
+    ttl-hours: 24
+  storage:
+    local-path: ${user.dir}/../data/uploads
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
