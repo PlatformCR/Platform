@@ -13,7 +13,7 @@ Implementation notes: [MVP2-IMPLEMENTATION.md](MVP2-IMPLEMENTATION.md)
 3. Work order — steps in sequence  
 4. Checklist — mark done as we go  
 5. Topic docs  
-6. Backlog — rest of former MVP1 next steps (after phase A)
+6. Next — **[MVP3.md](MVP3.md)** (backlog moved)
 
 ---
 
@@ -27,12 +27,13 @@ Implementation notes: [MVP2-IMPLEMENTATION.md](MVP2-IMPLEMENTATION.md)
 - Web: `/register` + “Continue with Google” on `/login`
 - Keep existing session rules: opaque token, `token_hash`, one active session per user, 24h / logout
 
-### Out of phase A (see section 6 — Backlog)
+### Out of phase A (see **[MVP3.md](MVP3.md)**)
 
 - Email verification, invite-only, admin-created users
 - Forgot / reset password; HttpOnly cookies / refresh tokens
 - SAML or non-Google IdPs
 - Roles admin GUI, theme switcher, i18n, landing kit, R2, etc.
+- Payments / memberships (MVP3)
 
 ---
 
@@ -173,34 +174,10 @@ Auth detail for register + Google SSO: **[03-security.md](03-security.md)**.
 
 ---
 
-## 6. Backlog (after phase A → plan later / MVP3)
+## 6. Next
 
-Pulled from [MVP1.md](MVP1.md) §7 Next steps (items not in phase A).
+Phase A of MVP2 is **done** (register + Google SSO).
 
-### Auth and security
-- [ ] Email verification / invite-only / admin-created users
-- [ ] SSO beyond Google (other OIDC / SAML) if needed
-- [ ] Forgot / reset password
-- [ ] HttpOnly cookies and/or refresh tokens
-- [ ] Stricter TLS/HSTS for shared environments
-- [ ] Redis / Spring Session only if DB sessions are not enough
-- [ ] Rate-limit / CAPTCHA on public register & OAuth when on the public internet
+All former §6 backlog items and new billing/memberships work live in **[MVP3.md](MVP3.md)** (and [07-payments-memberships.md](07-payments-memberships.md)).
 
-### Roles admin GUI
-- [ ] CRUD roles and permissions in UI
-- [ ] Assign permissions to roles / roles to users
-- [ ] Gate admin with `roles.manage`
-- [ ] Optional: menus driven by `/me` permissions
-
-### Product / UX
-- [ ] Theme feature (light / dark / system) — until then UI is dark-only; brand **Platform** white — [04-frontend.md](04-frontend.md)
-- [ ] i18n (ES / EN)
-- [ ] Rich homepage
-- [ ] Client branding in footer from config
-- [ ] Landing-page component kit — [05-landing-pages.md](05-landing-pages.md)
-
-### Media and platform
-- [ ] Swap local storage → Cloudflare R2 + presigned uploads
-- [ ] Postman collection snapshot (optional)
-- [ ] Testcontainers Postgres
-- [ ] Lombok yes/no team-wide
+GitHub: former issue #15 retargeted / superseded by MVP3 milestone issues.

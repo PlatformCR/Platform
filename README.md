@@ -12,7 +12,7 @@ Local default: **H2** (no Docker). Then `api` + `web`.
 
 ## Docs / plans
 
-- [`00-Planning/`](00-Planning/) — plans ([MVP1.md](00-Planning/MVP1.md), [MVP2.md](00-Planning/MVP2.md))
+- [`00-Planning/`](00-Planning/) — plans ([MVP1.md](00-Planning/MVP1.md), [MVP2.md](00-Planning/MVP2.md), [MVP3.md](00-Planning/MVP3.md), [MVP3-IMPLEMENTATION.md](00-Planning/MVP3-IMPLEMENTATION.md), [07-payments-memberships.md](00-Planning/07-payments-memberships.md))
 - [`01-Project Instructions/`](01-Project%20Instructions/) — how to run
 
 ## Layout
@@ -32,4 +32,5 @@ Platform/
 ## Status
 
 **MVP1 complete.** Local runs on H2 by default.  
-**MVP2 phase A (planned):** user registration + Google SSO — [MVP2.md](00-Planning/MVP2.md).
+**MVP2 phase A complete:** registration + Google SSO — [MVP2.md](00-Planning/MVP2.md).  
+**MVP3 (planning):** payments provider + memberships design; backlog moved from MVP2 — [MVP3.md](00-Planning/MVP3.md).

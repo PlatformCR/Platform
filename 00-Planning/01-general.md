@@ -99,6 +99,8 @@ Table sketch: `assets (id, object_key, url, content_type, size_bytes, uploaded_b
 - Marketing one-pagers (separate kit): [05-landing-pages.md](05-landing-pages.md)
 - API call optimization (few round-trips): [06-api-optimization.md](06-api-optimization.md)
 - What we build first: [MVP1.md](MVP1.md)
-- Next delivery (register + Google SSO + backlog): [MVP2.md](MVP2.md)
+- MVP2 (register + Google SSO): [MVP2.md](MVP2.md)
+- Next delivery (payments, memberships, backlog): [MVP3.md](MVP3.md)
+- Payments research: [07-payments-memberships.md](07-payments-memberships.md)
 
 > Repo folder name: `00-Planning/` so it appears first in the file tree.
