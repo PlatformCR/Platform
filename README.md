@@ -14,6 +14,7 @@ Local default: **H2** (no Docker). Then `api` + `web`.
 
 - [`00-Planning/`](00-Planning/) — plans ([MVP1.md](00-Planning/MVP1.md), [MVP2.md](00-Planning/MVP2.md), [MVP3.md](00-Planning/MVP3.md), [MVP3-IMPLEMENTATION.md](00-Planning/MVP3-IMPLEMENTATION.md), [07-payments-memberships.md](00-Planning/07-payments-memberships.md))
 - [`01-Project Instructions/`](01-Project%20Instructions/) — how to run
+- [`03-ONVO Pay/`](03-ONVO%20Pay/) — ONVO docs cache ([llms.txt](03-ONVO%20Pay/llms.txt), [llms-full.md](03-ONVO%20Pay/llms-full.md)); live: [docs.onvopay.com](https://docs.onvopay.com/)
 
 ## Layout
 
@@ -21,6 +22,7 @@ Local default: **H2** (no Docker). Then `api` + `web`.
 Platform/
   00-Planning/
   01-Project Instructions/
+  03-ONVO Pay/             # ONVO Pay official docs (cached)
   api/
   web/
   data/uploads/

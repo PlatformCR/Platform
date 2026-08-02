@@ -7,7 +7,8 @@ Folder: [`00-Planning/`](../00-Planning/). Builds on **[MVP2](MVP2.md)** (regist
 Issues: [#16 provider decision](https://github.com/PlatformCR/Platform/issues/16) · [#17 memberships design](https://github.com/PlatformCR/Platform/issues/17) · [#18 backlog](https://github.com/PlatformCR/Platform/issues/18)
 
 Payments & memberships research: **[07-payments-memberships.md](07-payments-memberships.md)**  
-Implementation plan (from Cursor): **[MVP3-IMPLEMENTATION.md](MVP3-IMPLEMENTATION.md)**
+Implementation plan (from Cursor): **[MVP3-IMPLEMENTATION.md](MVP3-IMPLEMENTATION.md)**  
+ONVO official docs (cached): **[../03-ONVO Pay/](../03-ONVO%20Pay/)** · live [docs.onvopay.com](https://docs.onvopay.com/)
 
 **How to read this file (top → bottom):**
 
@@ -190,4 +191,4 @@ Moved from [MVP2.md](MVP2.md) §6 (former MVP1 next steps). Track on GitHub unde
 
 ## 7. Topic docs
 
-[01-general.md](01-general.md) · [02-springboot.md](02-springboot.md) · [03-security.md](03-security.md) · [04-frontend.md](04-frontend.md) · [05-landing-pages.md](05-landing-pages.md) · [06-api-optimization.md](06-api-optimization.md) · **[07-payments-memberships.md](07-payments-memberships.md)** · [MVP1.md](MVP1.md) · [MVP2.md](MVP2.md)
+[01-general.md](01-general.md) · [02-springboot.md](02-springboot.md) · [03-security.md](03-security.md) · [04-frontend.md](04-frontend.md) · [05-landing-pages.md](05-landing-pages.md) · [06-api-optimization.md](06-api-optimization.md) · **[07-payments-memberships.md](07-payments-memberships.md)** · [MVP1.md](MVP1.md) · [MVP2.md](MVP2.md) · ONVO: [../03-ONVO Pay/](../03-ONVO%20Pay/)

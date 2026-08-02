@@ -2,7 +2,7 @@
 
 Research and design for Costa Rica–oriented billing. Planning only — no production integration required to accept this doc.
 
-Related: [MVP3.md](MVP3.md)
+Related: [MVP3.md](MVP3.md) · ONVO docs cache: [../03-ONVO Pay/](../03-ONVO%20Pay/) ([llms.txt](../03-ONVO%20Pay/llms.txt) index, [llms-full.md](../03-ONVO%20Pay/llms-full.md) full) · live [docs.onvopay.com](https://docs.onvopay.com/)
 
 ---
 
@@ -164,6 +164,8 @@ Record answers in MVP3 checklist before coding phase B.
 
 ## 6. Sources
 
+- Local cache: [../03-ONVO Pay/](../03-ONVO%20Pay/) ([llms.txt](../03-ONVO%20Pay/llms.txt), [llms-full.md](../03-ONVO%20Pay/llms-full.md))  
+- [ONVO docs](https://docs.onvopay.com/)  
 - [ONVO pricing by country](https://onvopay.com/en/pricing)  
 - [ONVO subscriptions / cargos recurrentes](https://docs.onvopay.com/payments/subscriptions)  
 - [ONVO web SDK](https://docs.onvopay.com/integrations/sdk)  
