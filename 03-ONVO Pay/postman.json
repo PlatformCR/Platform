@@ -1,0 +1,3648 @@
+{
+  "info": {
+    "_postman_id": "8c898d7b-96dd-4d41-8331-6bf61559af55",
+    "name": "ONVO Pay API",
+    "description": "Colección generada desde la documentación oficial de ONVO Pay (https://docs.onvopay.com) y el OpenAPI (`openapi.yaml`).\n\nLos folders y requests siguen el orden de la referencia de API.\n\nConfigurá `secretApiKey` y `publishableApiKey` con tus llaves del Dashboard (modo test o live).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{secretApiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.onvopay.com"
+    },
+    {
+      "key": "secretApiKey",
+      "value": "onvo_test_secret_key_..."
+    },
+    {
+      "key": "publishableApiKey",
+      "value": "onvo_test_publishable_key_..."
+    }
+  ],
+  "item": [
+    {
+      "name": "Marketplaces",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear una cuenta conectada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts"
+              ]
+            },
+            "description": "Crea una cuenta conectada para un vendedor desde una cuenta primaria estándar. Autenticá la solicitud con la Secret API Key de la cuenta primaria; la llave determina la cuenta propietaria y el modo `test` o `live`.\n\nLa respuesta incluye el objeto público de la cuenta y el `onboardingUrl` alojado por ONVO. El vendedor debe completar ese flujo antes de operar.\n\nOpenAPI: `POST /v1/connected-accounts`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"Tienda Conectada\",\n  \"marketplaceAppFee\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar cuentas conectadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending_onboarding",
+                  "description": "Estado exacto de la cuenta conectada. `restricted` no forma parte del contrato de Secret API Key.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "string",
+                  "description": "Cursor retornado en `meta.cursorNext`. No lo enviés junto con `endingBefore`.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "string",
+                  "description": "Cursor retornado en `meta.cursorBefore`. No lo enviés junto con `startingAfter`.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Cantidad máxima de cuentas conectadas por página.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista únicamente las cuentas conectadas que pertenecen a la cuenta primaria y al modo de la Secret API Key. Los parámetros `startingAfter` y `endingBefore` son mutuamente excluyentes y cada cursor debe pertenecer al mismo conjunto de cuenta, modo, tipo y filtro.\n\nLa respuesta usa el envelope `{ data, meta }`. `onboardingUrl` nunca aparece en este listado.\n\nOpenAPI: `GET /v1/connected-accounts`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener una cuenta conectada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Retorna el objeto público de una cuenta conectada que pertenece a la cuenta primaria y al modo de la Secret API Key. Un ID inexistente, de otra cuenta primaria o de otro modo produce la misma respuesta `404`.\n\nLa respuesta no incluye datos bancarios, miembros, invitaciones, configuración de tarifa semanal ni `onboardingUrl`.\n\nOpenAPI: `GET /v1/connected-accounts/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar una cuenta conectada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Actualiza `businessName`, `marketplaceAppFee` o ambos. Debés enviar al menos uno. Esta operación no permite modificar estado, onboarding, frecuencia de liquidación, tarifas semanales ni datos bancarios.\n\nRepetir exactamente la misma actualización establece los mismos valores. La respuesta no incluye `onboardingUrl`.\n\nOpenAPI: `POST /v1/connected-accounts/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"Tienda Conectada Actualizada\",\n  \"marketplaceAppFee\": 6.25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Configurar una tarifa semanal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts/{{id}}/weekly-fees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts",
+                ":id",
+                "weekly-fees"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Crea o actualiza la tarifa fija semanal de una cuenta conectada. La Secret API Key determina la cuenta primaria y el modo `test` o `live`; el ID debe pertenecer a esa misma cuenta primaria y modo.\n\nPodés enviar uno o más campos. Para activar el cobro, la configuración efectiva debe incluir monto y moneda, y tanto la cuenta primaria como la conectada deben tener una cuenta bancaria de liquidación en esa moneda.\n\nLos valores `null` no están permitidos. Omití un campo para conservar su valor actual; cada solicitud actualiza la configuración de forma atómica.\n\nCada viernes a las `02:00` en `America/Costa_Rica`, ONVO crea la obligación si la tarifa está habilitada y la cuenta conectada está activa. Deshabilitarla detiene obligaciones futuras, pero no elimina saldos pendientes.\n\nOpenAPI: `POST /v1/connected-accounts/{id}/weekly-fees`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"marketplaceWeeklyFeeEnabled\": true,\n  \"marketplaceWeeklyFeeAmount\": 1000,\n  \"marketplaceWeeklyFeeCurrency\": \"CRC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Regenerar enlace de onboarding",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/connected-accounts/{{id}}/onboarding-link",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connected-accounts",
+                ":id",
+                "onboarding-link"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Expira el enlace anterior y crea uno nuevo para una cuenta conectada que todavía no completó el onboarding. La operación se ejecuta en una transacción y serializa solicitudes concurrentes para dejar como máximo un enlace vigente.\n\nOpenAPI: `POST /v1/connected-accounts/{id}/onboarding-link`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/customers`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": {\n    \"city\": \"San José\",\n    \"country\": \"CR\",\n    \"postalCode\": \"10101\",\n    \"state\": \"San José\"\n  },\n  \"description\": \"Cliente de prueba\",\n  \"email\": \"test_customer@onvopay.com\",\n  \"name\": \"John Doe\",\n  \"phone\": \"+50688880000\",\n  \"shipping\": {\n    \"address\": {\n      \"country\": \"CR\"\n    },\n    \"name\": \"John Doe\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todos los Clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "customer@onvopay.com",
+                  "description": "Identificador único del objeto.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/customers`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/customers/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/customers/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": {\n    \"city\": \"San José\",\n    \"country\": \"CR\",\n    \"postalCode\": \"10101\",\n    \"state\": \"San José\"\n  },\n  \"description\": \"Cliente de prueba\",\n  \"email\": \"test_customer@onvopay.com\",\n  \"name\": \"John Doe\",\n  \"phone\": \"+50688880000\",\n  \"shipping\": {\n    \"address\": {\n      \"country\": \"CR\"\n    },\n    \"name\": \"John Doe\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar un Cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/customers/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener los métodos de pago de un Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}/payment-methods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id",
+                "payment-methods"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/customers/{id}/payment-methods`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener los cargos recurrentes de un Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id",
+                "subscriptions"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ],
+              "query": [
+                {
+                  "key": "startingAfter",
+                  "value": "string",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "string",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "0",
+                  "description": "Un límite en la cantidad de objetos a retornar.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista los cargos recurrentes asociados a un cliente.\n\nOpenAPI: `GET /v1/customers/{id}/subscriptions`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener las intenciones de pago de un Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/customers/{{id}}/payment-intents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                ":id",
+                "payment-intents"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ],
+              "query": [
+                {
+                  "key": "startingAfter",
+                  "value": "string",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "string",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "0",
+                  "description": "Un límite en la cantidad de objetos a retornar.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista las intenciones de pago asociadas a un cliente.\n\nOpenAPI: `GET /v1/customers/{id}/payment-intents`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Métodos de pago",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Método de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nPara evitar errores `400` de validación al enviar `card`, validá que `card.holderName` sea texto no vacío, `card.number` sea un string de dígitos sin espacios ni separadores y que pase Luhn, `card.expMonth` sea un entero entre `1` y `12`, `card.expYear` sea un entero entre `2023` y `2100`, y `card.cvv` sea un string de `3` o `4` dígitos cuando lo enviés.\n\nPara cuentas de comercio creadas en Perú, el cliente asociado al método de pago debe tener correo electrónico al crear métodos de pago. Podés enviar `customer.email` en el payload para crear y asociar el cliente en la misma solicitud, o enviar `customerId` de un cliente creado previamente con el atributo `email`.\n\nCuando creás un método de pago de tipo `card`, ONVO tokeniza y verifica la tarjeta antes de crear el objeto. Si la tokenización falla por datos inválidos, el endpoint responde `400` con `code: \"cards.invalid_card_info\"` y no se crea ningún método de pago.\n\nOpenAPI: `POST /v1/payment-methods`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billing\": {\n    \"address\": {\n      \"country\": \"CR\"\n    },\n    \"name\": \"John Doe\",\n    \"idType\": \"national_natural_person\",\n    \"idNumber\": \"01-1393-1919\"\n  },\n  \"card\": {\n    \"expMonth\": 12,\n    \"expYear\": 2026,\n    \"number\": \"4242424242424242\",\n    \"holderName\": \"John Doe\",\n    \"cvv\": \"123\"\n  },\n  \"credix\": {\n    \"number\": \"4111111111111111\",\n    \"expMonth\": 12,\n    \"expYear\": 2026,\n    \"cvv\": \"123\",\n    \"holderName\": \"John Doe\",\n    \"brand\": \"credix\",\n    \"last4\": \"1111\",\n    \"identifier\": \"credix_customer_123\"\n  },\n  \"crypto\": {\n    \"cryptoPaymentId\": \"crypto_pay_123\"\n  },\n  \"customerId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"customer\": {\n    \"name\": \"John Doe\",\n    \"email\": \"test_customer@onvopay.com\",\n    \"phone\": \"+50688880000\"\n  },\n  \"mobileNumber\": {\n    \"identification\": \"01-1393-1919\",\n    \"identificationType\": 0,\n    \"number\": \"+50688880000\"\n  },\n  \"bankDeposit\": {\n    \"identification\": \"01-2345-6789\",\n    \"identificationType\": 1,\n    \"IBAN\": \"CR12345678901234567890\"\n  },\n  \"zunify\": {\n    \"pin\": 1234,\n    \"phoneNumber\": \"11223344\"\n  },\n  \"type\": \"card\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todos los Métodos de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/payment-methods`"
+          },
+          "response": []
+        },
+        {
+          "name": "Desconectar un Método de pago",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods/{{id}}/detach",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods",
+                ":id",
+                "detach"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-methods/{id}/detach`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Método de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/payment-methods/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Método de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-methods/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billing\": {\n    \"address\": {\n      \"country\": \"CR\"\n    },\n    \"name\": \"John Doe\"\n  },\n  \"card\": {\n    \"cvv\": \"123\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar un Método de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods/{{id}}/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods",
+                ":id",
+                "verify"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Verifica un método de pago que requiere confirmación manual, como una cuenta bancaria.\n\nOpenAPI: `POST /v1/payment-methods/{id}/verify`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 99\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener verificación de un Método de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-methods/{{id}}/verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-methods",
+                ":id",
+                "verification"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Retorna el estado de verificación asociado a un método de pago.\n\nOpenAPI: `GET /v1/payment-methods/{id}/verification`"
+          },
+          "response": []
+        },
+        {
+          "name": "Validar información de una cuenta bancaria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/bank-accounts/check-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "bank-accounts",
+                "check-info"
+              ]
+            },
+            "description": "Valida el estado, moneda y verificación de una cuenta bancaria antes de crear o confirmar un método de pago.\n\nOpenAPI: `POST /v1/bank-accounts/check-info`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"IBAN\": \"CR02010200000000000001\",\n  \"identification\": \"01-1393-1919\",\n  \"identificationType\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Intenciones de pago",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear una Intención de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-intents`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 150,\n  \"captureMethod\": \"automatic\",\n  \"currency\": \"USD\",\n  \"customerId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"description\": \"Intención de pago de prueba\",\n  \"metadata\": {\n    \"orderId\": \"123456789\",\n    \"cartId\": \"987654321\"\n  },\n  \"officeId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"onBehalfOf\": \"cl502zv0d0127ebdp3zt27651\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todas las Intenciones de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                "account"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/payment-intents/account`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener una Intención de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/payment-intents/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar una Intención de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-intents/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 150,\n  \"captureMethod\": \"automatic\",\n  \"currency\": \"USD\",\n  \"customerId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"description\": \"Intención de pago de prueba\",\n  \"metadata\": {\n    \"orderId\": \"123456789\",\n    \"cartId\": \"987654321\"\n  },\n  \"officeId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"onBehalfOf\": \"cl502zv0d0127ebdp3zt27651\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar una Intención de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/{{id}}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                ":id",
+                "confirm"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-intents/{id}/confirm`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethodId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"cvv\": \"123\",\n  \"credixInstallmentMonths\": 3,\n  \"returnUrl\": \"https://www.example.com/return\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Capturar una Intención de pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/{{id}}/capture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                ":id",
+                "capture"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-intents/{id}/capture`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountToCapture\": 1099\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar una Intención de pago",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payment-intents/{{id}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payment-intents",
+                ":id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/payment-intents/{id}/cancel`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reembolsos",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Reembolso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/refunds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "refunds"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/refunds`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 150,\n  \"paymentIntentId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"description\": \"Reembolso de prueba\",\n  \"reason\": \"requested_by_customer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Reembolso",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/refunds/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "refunds",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/refunds/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "products"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/products`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Donación Fundación Azul\",\n  \"description\": \"Aporte voluntario para campaña anual\",\n  \"images\": [\n    \"https://example.com/donacion.png\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todos los Productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/products`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Producto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/products/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/products/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/products/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/products/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Donación Fundación Azul\",\n  \"description\": \"Aporte voluntario para campaña anual\",\n  \"images\": [\n    \"https://example.com/donacion.png\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar un Producto",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/products/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/products/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Precios",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Precio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/prices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "prices"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/prices`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"CRC\",\n  \"type\": \"one_time\",\n  \"productId\": \"prod_abc123\",\n  \"customUnitAmount\": {\n    \"preset\": 1000000,\n    \"minimum\": 500000,\n    \"maximum\": 5000000\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todos los Precios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/prices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/prices`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Precio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/prices/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "prices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/prices/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Precio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/prices/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "prices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/prices/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"CRC\",\n  \"type\": \"one_time\",\n  \"productId\": \"prod_abc123\",\n  \"customUnitAmount\": {\n    \"preset\": 1000000,\n    \"minimum\": 500000,\n    \"maximum\": 5000000\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar un Precio",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/prices/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "prices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/prices/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cargos recurrentes",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear un Cargo recurrente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/subscriptions`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billingCycleAnchor\": \"2022-09-31T00:00:00.000Z\",\n  \"cancelAt\": \"2022-06-12T21:21:10.587Z\",\n  \"cancelAtPeriodEnd\": true,\n  \"customerId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"description\": \"Cargo recurrente de prueba\",\n  \"metadata\": {\n    \"orderId\": \"123456789\",\n    \"plan\": \"pro_monthly\"\n  },\n  \"paymentBehavior\": \"default_incomplete\",\n  \"startDate\": \"2026-01-10T21:21:10.587Z\",\n  \"paymentMethodId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"items\": [\n    {\n      \"priceId\": \"cl502zv0d0127ebdp3zt27651\",\n      \"quantity\": 2\n    }\n  ],\n  \"trialPeriodDays\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todos los Cargos recurrentes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "customerId",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Identificador único del cliente asociado al cargo recurrente.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active",
+                  "description": "Corresponde a uno o varios estados del cargo recurrente, separados por coma. Valores permitidos: `active`, `past_due`, `canceled`, `unpaid`, `incomplete`, `incomplete_expired`, `trialing`.",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "test@onvopay.com",
+                  "description": "Corresponde al correo electronico de un [Cliente](#tag/Clientes) asociado a un cargo recurrente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/subscriptions`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Cargo Recurrente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/subscriptions/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Cargo recurrente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/subscriptions/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billingCycleAnchor\": \"2022-09-31T00:00:00.000Z\",\n  \"cancelAt\": \"2022-06-12T21:21:10.587Z\",\n  \"cancelAtPeriodEnd\": true,\n  \"customerId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"description\": \"Cargo recurrente de prueba\",\n  \"metadata\": {\n    \"orderId\": \"123456789\",\n    \"plan\": \"pro_monthly\"\n  },\n  \"paymentBehavior\": \"default_incomplete\",\n  \"startDate\": \"2026-01-10T21:21:10.587Z\",\n  \"paymentMethodId\": \"cl502zv0d0127ebdp3zt27651\",\n  \"trialPeriodDays\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar un Cargo recurrente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/subscriptions/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar un Cargo recurrente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id",
+                "confirm"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/subscriptions/{id}/confirm`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethodId\": \"cl502zv0d0127ebdp3zt27651\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agregar item a un Cargo recurrente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id",
+                "items"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/subscriptions/{id}/items`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Producto de prueba\",\n  \"amount\": 2099,\n  \"quantity\": 1,\n  \"currency\": \"USD\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar item de un Cargo recurrente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}/items/{{item}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id",
+                "items",
+                ":item"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                },
+                {
+                  "key": "item",
+                  "value": "<item>",
+                  "description": "Path parameter: item"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `PATCH /v1/subscriptions/{id}/items/{item}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Item adicional de prueba\",\n  \"amount\": 2099,\n  \"quantity\": 1,\n  \"currency\": \"USD\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar item de un Cargo recurrente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/subscriptions/{{id}}/items/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "subscriptions",
+                ":id",
+                "items",
+                ":itemId"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                },
+                {
+                  "key": "itemId",
+                  "value": "<itemId>",
+                  "description": "Path parameter: itemId"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/subscriptions/{id}/items/{itemId}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Renovaciones",
+      "description": "Las renovaciones representan cada período de cobro de un cargo recurrente. ONVO crea una renovación al inicio de la suscripción y en cada renovación exitosa. Cada renovación está asociada a una intención de pago y permite consultar el cobro que corresponde a ese período.",
+      "item": [
+        {
+          "name": "Listar renovaciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "invoices"
+              ],
+              "query": [
+                {
+                  "key": "subscriptionId",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Identificador único del cargo recurrente asociado a la renovación.",
+                  "disabled": true
+                },
+                {
+                  "key": "paymentIntentId",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Identificador único de la intención de pago asociada a la renovación.",
+                  "disabled": true
+                },
+                {
+                  "key": "customerId",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Identificador único del cliente asociado a la renovación.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "paid",
+                  "description": "Estado de la renovación. Podés enviar uno o varios estados separados por coma.",
+                  "disabled": true
+                },
+                {
+                  "key": "currency",
+                  "value": "USD",
+                  "description": "Moneda de la renovación.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "total[gte]",
+                  "value": "1000",
+                  "description": "Monto mínimo total de la renovación en centavos.",
+                  "disabled": true
+                },
+                {
+                  "key": "total[lte]",
+                  "value": "5000",
+                  "description": "Monto máximo total de la renovación en centavos.",
+                  "disabled": true
+                },
+                {
+                  "key": "metadata[key]",
+                  "value": "orderId",
+                  "description": "Llave de metadata para filtrar renovaciones.",
+                  "disabled": true
+                },
+                {
+                  "key": "metadata[value]",
+                  "value": "order_123",
+                  "description": "Valor de metadata para filtrar renovaciones.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 25.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "expand",
+                  "value": "payment_intent",
+                  "description": "Permite expandir objetos relacionados. Valores soportados: `payment_intent` y `subscription`.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista las renovaciones de la cuenta. Las renovaciones representan cada período de cobro de un cargo recurrente. ONVO crea una renovación al inicio de la suscripción y en cada renovación exitosa. Cada renovación está asociada a una intención de pago y permite consultar el cobro que corresponde a ese período.\n\nEjemplos de URLs:\n- Paginación: `GET /v1/invoices?limit=25&startingAfter=cl40muorw00493ndp0okzk2g3`\n- Filtrar por cliente y estado: `GET /v1/invoices?customerId=cl40muorw00493ndp0okzk2g3&status=paid`\n- Filtrar por varios estados: `GET /v1/invoices?status=open,paid`\n- Filtrar por rango de fechas: `GET /v1/invoices?createdAt[gte]=2026-01-01T00:00:00.000Z&createdAt[lte]=2026-01-31T23:59:59.999Z`\n- Filtrar por rango de montos: `GET /v1/invoices?total[gte]=1000&total[lte]=5000`\n- Filtrar por metadata: `GET /v1/invoices?metadata[key]=orderId&metadata[value]=order_123`\n- Expandir objetos relacionados: `GET /v1/invoices?expand=payment_intent&expand=subscription`\n\nSi construís la URL manualmente, podés escribir filtros con corchetes como `createdAt[gte]` y `metadata[key]`. Los clientes HTTP suelen codificarlos como `createdAt%5Bgte%5D` y `metadata%5Bkey%5D` al enviar la solicitud.\n\nOpenAPI: `GET /v1/invoices`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener una renovación",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/invoices/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Devuelve una renovación específica. Las renovaciones representan cada período de cobro de un cargo recurrente. ONVO crea una renovación al inicio de la suscripción y en cada renovación exitosa. Cada renovación está asociada a una intención de pago y permite consultar el cobro que corresponde a ese período.\n\nOpenAPI: `GET /v1/invoices/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tarifas de envío",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear una tarifa de envío",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/shipping-rates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "shipping-rates"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/shipping-rates`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"currency\": \"USD\",\n  \"displayName\": \"Envío a domicilio al siguiente día.\",\n  \"isActive\": true,\n  \"deliveryEstimate\": {\n    \"minimumUnit\": \"days\",\n    \"minimumValue\": 2,\n    \"maximumUnit\": \"days\",\n    \"maximumValue\": 2\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar todas las tarifas de envío",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/shipping-rates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "shipping-rates"
+              ],
+              "query": [
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2022-06-12T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "cl40muorw00493ndp0okzk2g3",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/shipping-rates`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener una tarifa de envío",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/shipping-rates/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "shipping-rates",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/shipping-rates/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar una tarifa de envío",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/shipping-rates/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "shipping-rates",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/shipping-rates/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"currency\": \"USD\",\n  \"displayName\": \"Envío a domicilio al siguiente día.\",\n  \"isActive\": true,\n  \"deliveryEstimate\": {\n    \"minimumUnit\": \"days\",\n    \"minimumValue\": 2,\n    \"maximumUnit\": \"days\",\n    \"maximumValue\": 2\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar una tarifa de envío",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/shipping-rates/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "shipping-rates",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `DELETE /v1/shipping-rates/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sesiones de Checkout",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Crear una Sesión de Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/one-time-link",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                "one-time-link"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/checkout/sessions/one-time-link`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lineItems\": [\n    {\n      \"quantity\": 1,\n      \"unitAmount\": 250000,\n      \"currency\": \"CRC\",\n      \"description\": \"Orden #1001\"\n    }\n  ],\n  \"customerEmail\": \"comprador@example.com\",\n  \"redirectUrl\": \"https://example.com/success\",\n  \"cancelUrl\": \"https://example.com/cancel\",\n  \"discounts\": [\n    {\n      \"coupon\": \"cpn_abc123\"\n    }\n  ],\n  \"metadata\": {\n    \"orderId\": \"1001\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear una sesión desde un link de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/link/{{paymentLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                "link",
+                ":paymentLinkId"
+              ],
+              "variable": [
+                {
+                  "key": "paymentLinkId",
+                  "value": "<paymentLinkId>",
+                  "description": "Path parameter: paymentLinkId"
+                }
+              ]
+            },
+            "description": "Crea una sesión de Checkout a partir de un link de pago existente.\n\nOpenAPI: `GET /v1/checkout/sessions/link/{paymentLinkId}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener una Sesión de Checkout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Retorna una sesión de Checkout por su identificador.\n\nOpenAPI: `GET /v1/checkout/sessions/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un link de pago",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/one-time-link/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                "one-time-link",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Retorna un link de pago creado desde Checkout.\n\nOpenAPI: `GET /v1/checkout/sessions/one-time-link/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar una Sesión de Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/{{id}}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                ":id",
+                "confirm"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Confirma una sesión de Checkout con el método de pago seleccionado.\n\nOpenAPI: `POST /v1/checkout/sessions/{id}/confirm`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pm\": \"cl502zv0d0127ebdp3zt27651\",\n  \"setupFutureUsage\": false,\n  \"shippingRateId\": \"shr_123\",\n  \"customer\": {\n    \"address\": {\n      \"city\": \"San José\",\n      \"country\": \"CR\",\n      \"postalCode\": \"10101\",\n      \"state\": \"San José\"\n    },\n    \"description\": \"Cliente de prueba\",\n    \"email\": \"test_customer@onvopay.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"+50688880000\",\n    \"shipping\": {\n      \"address\": {\n        \"country\": \"CR\"\n      },\n      \"name\": \"John Doe\"\n    }\n  },\n  \"cvv\": \"123\",\n  \"merchantName\": \"ONVO Store\",\n  \"credixInstallmentMonths\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar item de una Sesión de Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/{{id}}/line-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                ":id",
+                "line-item"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Actualiza el item seleccionado de una sesión de Checkout abierta.\n\nOpenAPI: `POST /v1/checkout/sessions/{id}/line-item`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priceId\": \"price_123\",\n  \"quantity\": 2,\n  \"unitAmount\": 2099\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar cliente de una Sesión de Checkout",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{publishableApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/{{id}}/customer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                ":id",
+                "customer"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Actualiza los datos de contacto del cliente en una sesión de Checkout.\n\nOpenAPI: `PATCH /v1/checkout/sessions/{id}/customer`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerEmail\": \"test@onvopay.com\",\n  \"customerPhone\": \"+50688880000\",\n  \"customerName\": \"John Doe\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Expirar una Sesión de Checkout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/{{id}}/expire",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                ":id",
+                "expire"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `POST /v1/checkout/sessions/{id}/expire`"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Sesiones de Checkout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/checkout/sessions/one-time-link/account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "checkout",
+                "sessions",
+                "one-time-link",
+                "account"
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/checkout/sessions/one-time-link/account`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cupones",
+      "description": "Crea y administra cupones que pueden aplicarse a Checkout.",
+      "item": [
+        {
+          "name": "Crear un Cupón",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/coupons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "coupons"
+              ]
+            },
+            "description": "Crea un cupón que después podés asociar a una sesión de Checkout de un solo uso.\n\nOpenAPI: `POST /v1/coupons`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Banco Sponsor 10%\",\n  \"type\": \"percentage\",\n  \"percentOff\": 10,\n  \"scope\": \"checkout_session\",\n  \"appliesTo\": [\n    \"one_time_links\"\n  ],\n  \"maxRedemptions\": 100,\n  \"redeemBy\": \"2026-06-30\",\n  \"binRules\": [\n    {\n      \"bin\": \"411111\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Cupones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/coupons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "coupons"
+              ]
+            },
+            "description": "Lista los cupones creados en el modo de la API key.\n\nOpenAPI: `GET /v1/coupons`"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un Cupón",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/coupons/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "coupons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Retorna un cupón por su identificador.\n\nOpenAPI: `GET /v1/coupons/{id}`"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un Cupón",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/coupons/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "coupons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Actualiza un cupón. Cuando enviás `binRules` o `promotionCodes`, ONVO reemplaza la lista anterior por la lista enviada.\n\nOpenAPI: `POST /v1/coupons/{id}`",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Banco Sponsor 10%\",\n  \"type\": \"percentage\",\n  \"percentOff\": 10,\n  \"scope\": \"checkout_session\",\n  \"appliesTo\": [\n    \"one_time_links\"\n  ],\n  \"maxRedemptions\": 100,\n  \"redeemBy\": \"2026-06-30\",\n  \"binRules\": [\n    {\n      \"bin\": \"411111\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar un Cupón",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/coupons/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "coupons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Path parameter: id"
+                }
+              ]
+            },
+            "description": "Borra un cupón por su identificador.\n\nOpenAPI: `DELETE /v1/coupons/{id}`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "SINPE Móvil",
+      "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.",
+      "item": [
+        {
+          "name": "Listar pagos por SINPE Móvil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secretApiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/mobile-transfers/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "mobile-transfers",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Orden de los resultados por fecha de creación. Por defecto es `desc` (más recientes primero).",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "received",
+                  "description": "Filtra por estado del pago. Podés especificar múltiples estados separados por coma (ej: `received,pending`).",
+                  "disabled": true
+                },
+                {
+                  "key": "SINPERefNumber",
+                  "value": "2025121616183220990502000",
+                  "description": "Filtra por el número de referencia SINPE exacto. Este es un identificador único de 25 caracteres generado por el sistema SINPE para cada transferencia.",
+                  "disabled": true
+                },
+                {
+                  "key": "originId",
+                  "value": "01-0000-0000",
+                  "description": "Filtra por el número de identificación (cédula) del remitente. El formato varía según el tipo de identificación:\n- **Cédula física**: `0#-####-####` (Ej: `01-1393-1919`)\n- **DIMEX**: `1###########` (Ej: `1293817461127`)\n- **Cédula jurídica**: `2-###-######` o `3-###-######` (Ej: `3-101-212393`)\n- **NITE**: `4-000-######` (Ej: `4-000-042141`)\n- **DIDI**: `5###########` (Ej: `5123456789011`)\n- **Pasaporte/Otro**: `9###########` (Ej: `9CA9381461127`)\n",
+                  "disabled": true
+                },
+                {
+                  "key": "originName",
+                  "value": "Juan",
+                  "description": "Búsqueda parcial por el nombre del remitente (no sensible a mayúsculas/minúsculas).",
+                  "disabled": true
+                },
+                {
+                  "key": "description",
+                  "value": "factura",
+                  "description": "Búsqueda parcial en la descripción del pago (no sensible a mayúsculas/minúsculas).",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lt]",
+                  "value": "2024-01-15T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[lte]",
+                  "value": "2024-01-15T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es menor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gt]",
+                  "value": "2024-01-15T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "createdAt[gte]",
+                  "value": "2024-01-15T21:21:10.587Z",
+                  "description": "Fecha y hora, en formato <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">ISO 8901</a> y con zona horaria en <a href=\"https://en.wikipedia.org/wiki/Coordinated_Universal_Time\" target=\"_blank\">UTC</a>, que filtra los resultados donde `createdAt` es mayor o igual que el valor especificado.",
+                  "disabled": true
+                },
+                {
+                  "key": "endingBefore",
+                  "value": "clm8x9abc0001jk08example12",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Un límite en la cantidad de objetos a retornar. Puede ser un valor entre 1 y 100, el valor por defecto es 10.",
+                  "disabled": true
+                },
+                {
+                  "key": "startingAfter",
+                  "value": "clm8x9abc0001jk08example12",
+                  "description": "Un cursor usado para paginación. Corresponde al ID de un objeto existente.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consultá la documentación de ONVO para ver detalles de integración y ejemplos.\n\nOpenAPI: `GET /v1/mobile-transfers/list`"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

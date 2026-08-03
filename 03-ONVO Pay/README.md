@@ -9,6 +9,7 @@ This folder holds ONVO’s AI-oriented Markdown dumps so agents and the team can
 1. Start with **[llms.txt](llms.txt)** — short index of guides and API pages (what to read for a given task).
 2. For full detail, use **[llms-full.md](llms-full.md)** — concatenated docs (auth, payment intents, subscriptions, SDK, webhooks, OpenAPI summary, etc.).
 3. Prefer live pages when something may have changed: [docs.onvopay.com](https://docs.onvopay.com/), [llms.txt](https://docs.onvopay.com/llms.txt), [llms-full.txt](https://docs.onvopay.com/llms-full.txt), [openapi.yaml](https://docs.onvopay.com/openapi.yaml).
+4. Import **[postman.json](postman.json)** into Postman to try the API. Set collection variables `secretApiKey` / `publishableApiKey`. Regenerate with `python generate_postman.py` after refreshing `openapi.yaml`.
 
 ## Relation to Platform
 

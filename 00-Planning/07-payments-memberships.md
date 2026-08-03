@@ -2,7 +2,7 @@
 
 Research and design for Costa Rica–oriented billing. Planning only — no production integration required to accept this doc.
 
-Related: [MVP3.md](MVP3.md) · ONVO docs cache: [../03-ONVO Pay/](../03-ONVO%20Pay/) ([llms.txt](../03-ONVO%20Pay/llms.txt) index, [llms-full.md](../03-ONVO%20Pay/llms-full.md) full) · live [docs.onvopay.com](https://docs.onvopay.com/)
+Related: [MVP3.md](MVP3.md) · ONVO docs cache: [../03-ONVO Pay/](../03-ONVO%20Pay/) ([llms.txt](../03-ONVO%20Pay/llms.txt) index, [llms-full.md](../03-ONVO%20Pay/llms-full.md) full) · live [docs.onvopay.com](https://docs.onvopay.com/) · **Hands-on curriculum:** [../04-Learning Path/](../04-Learning%20Path/)
 
 ---
 

@@ -8,7 +8,8 @@ Issues: [#16 provider decision](https://github.com/PlatformCR/Platform/issues/16
 
 Payments & memberships research: **[07-payments-memberships.md](07-payments-memberships.md)**  
 Implementation plan (from Cursor): **[MVP3-IMPLEMENTATION.md](MVP3-IMPLEMENTATION.md)**  
-ONVO official docs (cached): **[../03-ONVO Pay/](../03-ONVO%20Pay/)** · live [docs.onvopay.com](https://docs.onvopay.com/)
+ONVO official docs (cached): **[../03-ONVO Pay/](../03-ONVO%20Pay/)** · live [docs.onvopay.com](https://docs.onvopay.com/)  
+**Learning path (springs, full-stack):** **[../04-Learning Path/](../04-Learning%20Path/)** — guided curriculum backend + frontend + DB + tests
 
 **How to read this file (top → bottom):**
 
