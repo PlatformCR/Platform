@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Flyway `plans` + sync Product/Price | `onvo_price_id` en DB |
+| **2/2** | `GET /api/plans` + UI `/plans` | Precio legible en pantalla |
+
+**Base:** DoD.  
+**Reto:** sync dos veces no duplica products (test).  
+**Boss:** segundo plan anual además del mensual.
+
+---
+
 ## 1. Requirements
 
 - Tablas `plans` (code, name, interval, amount_cents, currency, `onvo_product_id`, `onvo_price_id`, active).

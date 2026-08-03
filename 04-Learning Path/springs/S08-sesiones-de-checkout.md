@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Create session + redirect URLs | Abrís URL de ONVO desde Platform |
+| **2/2** | Webhook succeeded + success/cancel pages | Notas: SDK vs Checkout (5 líneas) |
+
+**Base:** DoD.  
+**Reto:** cancel URL no marca paid (test o demo).  
+**Boss:** one-time link con metadata `orderId` redonda.
+
+---
+
 ## 1. Requirements
 
 - `POST /api/billing/checkout-sessions` crea sesión one-time (monto demo o line items).

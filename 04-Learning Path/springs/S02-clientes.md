@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/3** | Flyway + Entity + Repository | Tabla existe; sabés qué columna es el id de ONVO |
+| **2/3** | Service ensure + OnvoClient create + Controller | Customer creado una sola vez |
+| **3/3** | UI `/billing` + test service | Demo login → ver `onvo_customer_id` |
+
+**Base:** DoD.  
+**Reto:** segundo ensure no llama create (assert con mock).  
+**Boss:** endpoint admin `GET` lista customers (permiso).
+
+---
+
 ## 1. Requirements
 
 - Tabla `payment_customers` (`user_id` único, `onvo_customer_id`, timestamps).

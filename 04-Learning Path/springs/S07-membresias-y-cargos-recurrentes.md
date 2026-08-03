@@ -8,6 +8,23 @@
 
 ---
 
+## Sesiones (~2 h) — hito del path
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/6** | Diseño estados + Flyway memberships | Diagrama state machine propio |
+| **2/6** | `POST checkout` → subscription ONVO | Membership `pending` + id ONVO |
+| **3/6** | Webhooks renewal success/fail | Transiciones active / past_due |
+| **4/6** | UI planes + flujo pagar (SDK) | Usuario puede iniciar checkout |
+| **5/6** | Gate feature + `/me.membership` | Pending no ve premium |
+| **6/6** | Tests + **demo hito** 3 min | Grabás o anotáis la demo completa |
+
+**Base:** DoD + hito demo.  
+**Reto:** teach-back de 3 minutos en voz alta (grabate).  
+**Boss:** grace days simples en `past_due` (constante configurable).
+
+---
+
 ## 1. Requirements
 
 - Tabla `memberships` (`user_id`, `plan_id`, `status`, `onvo_subscription_id`, period start/end, canceled_at).

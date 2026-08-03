@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/3** | Leer SDK/PCI + diseño secuencia | Explicás publishable vs secret sin dudar |
+| **2/3** | Backend attach `paymentMethodId` | API guarda/asocia sin ver PAN |
+| **3/3** | UI tokenizar tarjeta test + listar | Método visible en UI y dashboard ONVO |
+
+**Base:** DoD.  
+**Reto:** grep del repo: cero secret keys en `web/`.  
+**Boss:** mostrar brand + last4 si ONVO los devuelve.
+
+---
+
 ## 1. Requirements
 
 - Front carga SDK ONVO con `VITE_ONVO_PUBLIC_KEY`.

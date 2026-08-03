@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Leer 3DS + fraud + diseñar UX | Notas: qué ve el usuario en challenge |
+| **2/2** | Implementar manejo SDK / no paid prematuro | Entitlement solo post-webhook |
+
+**Base:** DoD.  
+**Reto:** checklist “antes/después 3DS” en UI.  
+**Boss:** card de test que force 3DS (si existe) documentada paso a paso.
+
+---
+
 ## 1. Requirements
 
 - Leer docs [3DS](https://docs.onvopay.com/payments/three-ds) y [fraud monitoring](https://docs.onvopay.com/payments/fraud-monitoring).

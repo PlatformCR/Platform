@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Diseño + `OnvoProperties` + `.env.example` | Explicás por qué no va `@Value` suelto por todos lados |
+| **2/2** | `OnvoClient` + ping autenticado + test mínimo | Spring pega a ONVO; sabés dónde vive el Bearer |
+
+**Base:** DoD del spring.  
+**Reto:** mapeá un error 401 de ONVO a un Problem Detail claro.  
+**Boss:** interfaz `OnvoClient` + impl, para mockear en tests sin reflexionar.
+
+---
+
 ## 1. Requirements
 
 - Config `app.onvo.base-url`, `secret-key` desde env.

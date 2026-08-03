@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Checklist go-live + env prod documentados | Lista tachada en papel/notes |
+| **2/2** | Hardening client + runbook 1 página | Sabés rotar keys si se filtran |
+| **3/2** *(opcional)* | Retrospectiva del path | 3 aprendizajes + 1 hábito a mantener |
+
+**Base:** sesiones 1–2 + DoD.  
+**Reto:** feature flag `billing.enabled` esbozado.  
+**Boss:** un cobro live mínimo + refund (solo si merchant live listo).
+
+---
+
 ## 1. Requirements
 
 - Documentar variables prod:

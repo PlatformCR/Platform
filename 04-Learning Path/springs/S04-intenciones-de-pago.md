@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/3** | Tabla local + `createPaymentIntent` | Fila `requires_confirmation` (o equivalente) |
+| **2/3** | `confirm` + mapeo de status | Sabés nombrar 3 estados |
+| **3/3** | UI “Pagar demo” + tests | Cobro test en dashboard ONVO |
+
+**Base:** DoD.  
+**Reto:** mensaje de error amigable si la tarjeta test falla.  
+**Boss:** monto configurable (con validación max) sin hardcode.
+
+---
+
 ## 1. Requirements
 
 - Tabla `payments` o `payment_intents` local: `id`, `user_id`, `onvo_payment_intent_id`, `amount`, `currency`, `status`, timestamps.

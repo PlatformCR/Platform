@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/3** | Docs + tabla connected_accounts | Primary vs connected en 1 min |
+| **2/3** | Create account + onboarding link | Link generado (real o mock justificado) |
+| **3/3** | UI admin lista + teach-back | Demo corta |
+
+**Base:** DoD.  
+**Reto:** explicar application fee en palabras simples.  
+**Boss:** weekly fee endpoint si tu cuenta lo permite.
+
+---
+
 ## 1. Requirements
 
 - Leer docs [Marketplaces](https://docs.onvopay.com/payments/marketplaces).

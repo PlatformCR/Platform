@@ -2,6 +2,8 @@
 
 Cada spring del path ya trae estas secciones rellenadas. Cuando implementes por tu cuenta algo extra, usá esta plantilla.
 
+Con ritmo de **2 h/día**, un spring puede ocupar **varias sesiones**: el SDLC no tiene que caber en un solo día. Ejemplo: sesión 1 = Requirements + Design; sesiones siguientes = Implement por capas; última = Test + Demo. Ver [08-ritmo-2h.md](08-ritmo-2h.md).
+
 ---
 
 ## 1. Requirements (qué y para quién)

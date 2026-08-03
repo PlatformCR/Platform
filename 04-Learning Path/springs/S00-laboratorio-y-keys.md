@@ -8,6 +8,18 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta de la sesión | Al cerrar debés poder… |
+|---|-------------------|------------------------|
+| **1/1** | Cuenta ONVO + env + Postman + Platform up | Autenticar Postman y decir qué key usaste |
+
+**Base:** checklist Implement del spring.  
+**Reto:** sin mirar docs, dibujá el flujo Dev → Postman → ONVO.  
+**Boss:** escribí tu propia checklist de “día 0 en una laptop nueva”.
+
+---
+
 ## 1. Requirements
 
 - Poder levantar `api` + `web` local.

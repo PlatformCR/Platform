@@ -8,6 +8,20 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/3** | Refund API + estado local | Refund test de un payment |
+| **2/3** | Cancel membership (period end) | Status canceled + regla documentada |
+| **3/3** | UI confirmaciones + tests | Demo refund y cancel |
+
+**Base:** DoD.  
+**Reto:** impedir doble refund total.  
+**Boss:** refund parcial con amount en body.
+
+---
+
 ## 1. Requirements
 
 - `POST /api/billing/payments/{id}/refunds` → ONVO refund + estado local `refunded`/`partially_refunded`.

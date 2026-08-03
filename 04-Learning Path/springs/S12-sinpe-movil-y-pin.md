@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Docs SINPE + estado `deferred` | Resumen 10 líneas propio |
+| **2/2** | Código/UI o simulación webhook honesta | No acceso en deferred |
+
+**Base:** DoD (incluye honestidad si sandbox no cobra).  
+**Reto:** diagrama async SINPE vs tarjeta.  
+**Boss:** proxy `GET` list transfers si la API lo permite.
+
+---
+
 ## 1. Requirements
 
 - Leer docs [SINPE Móvil](https://docs.onvopay.com/payments/sinpe-mobile) y [SINPE PIN](https://docs.onvopay.com/payments/sinpe-pin).

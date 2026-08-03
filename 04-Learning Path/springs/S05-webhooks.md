@@ -8,6 +8,21 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/4** | Docs webhooks + túnel + diseño | Tenés URL pública de prueba anotada |
+| **2/4** | Endpoint público + verify secret | Request sin secreto → rechazo |
+| **3/4** | Tabla events + update payment idempotente | Mismo event_id dos veces = un solo efecto |
+| **4/4** | Tests + demo cobro→webhook→DB | Explicás por qué el browser no es la verdad |
+
+**Base:** DoD.  
+**Reto:** log estructurado `type` + `event_id` sin PII.  
+**Boss:** reintento simulado (re-enviar payload) y mostrar noop.
+
+---
+
 ## 1. Requirements
 
 - `POST /api/webhooks/onvo` **sin** session auth, pero con validación `X-Webhook-Secret` (o el mecanismo que documente ONVO).

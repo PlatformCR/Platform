@@ -8,6 +8,19 @@
 
 ---
 
+## Sesiones (~2 h)
+
+| # | Meta | Al cerrar… |
+|---|------|------------|
+| **1/2** | Crear cupón + shipping rate (API/Postman/client) | Objetos visibles en ONVO |
+| **2/2** | Session con discount + verificación | Sabés qué es `binRules` en 1 frase |
+
+**Base:** DoD.  
+**Reto:** cupón % vs fixed_amount — tabla comparativa tuya.  
+**Boss:** endpoint lista cupones en UI admin mínima.
+
+---
+
 ## 1. Requirements
 
 - Admin o seeder: crear 1 cupón test vía API ONVO (`percentage` simple).
