@@ -1,0 +1,1540 @@
+{
+  "info": {
+    "name": "Facturaencr — API de Facturación Electrónica Costa Rica",
+    "description": "API REST para emisión y consulta de comprobantes electrónicos ante Hacienda\nCosta Rica v4.4: Factura (01), Nota de Débito (02), Nota de Crédito (03),\nTiquete (04), Mensaje Receptor (05/06/07), Factura de Compra (08), Factura de\nExportación (09) y Recibo Electrónico de Pago (10).\n\n## Base URL\n`https://api.facturaencr.com/v2/efactura` — única. El **ambiente** (sandbox vs\nproducción de Hacienda) NO se decide por subdominio: lo determina el campo\n`environment` de la API Key (o el del certificado usado).\n\n## Autenticación\nDos cabeceras, **ambas obligatorias** en cada petición:\n- `X-API-Key`   — identificador público de la llave.\n- `X-API-Secret` — secreto en claro (se muestra una sola vez al crearla).\n\nNo se usa `Authorization: Bearer`. Faltando cualquiera → `401 unauthorized`.\nCada llave tiene **scopes** (`documents:read`, `documents:write`,\n`certificates:manage`, `webhooks:manage`); un endpoint sin el scope requerido\ndevuelve `403 forbidden_scope`. El aislamiento de datos por integrador es\nautomático: una llave solo ve los comprobantes y recursos de su propia cuenta.\n\n## Emisión asíncrona\nLos `POST /documents/*` responden **202 Accepted** con `Location:\n/v2/efactura/documents/{documentId}` y el documento en estado `queued`. El\nresultado final (aceptado/rechazado por Hacienda) llega por **webhook** o se\nconsulta con `GET /documents/{id}`.\n\n## Idempotencia\nLos POST de emisión exigen la cabecera `Idempotency-Key` (TTL 24 h). Reintentar\ncon la misma clave y el mismo body devuelve el mismo resultado; con la misma\nclave y distinto body → `409 idempotency_conflict`.\n\n## Webhooks\nCada entrega POST al endpoint del cliente incluye la firma\n`X-Efactura-Signature: t=<unix_segundos>,v1=<hmac_sha256_hex>`. El HMAC-SHA256\nse calcula sobre la cadena `` `${t}.${cuerpo_crudo}` `` con el `secret` del\nwebhook. Ventana de tolerancia recomendada: 300 s. Cabeceras adicionales:\n`X-Efactura-Event`, `X-Efactura-Delivery-Id`, `X-Efactura-Timestamp`.\nEl cuerpo entregado tiene la forma `{ event, documentId, timestamp, data }`.\n\n\n## Organización\nCarpetas alineadas a los tags de la documentación OpenAPI / guía oficial:\n1. Cuenta y credenciales · 2. Certificados · 3. Emisión (Emitir + Consulta) · 4. Emisores · 5. CABYS · 6. Webhooks.\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "efactura-cr-1785693588437"
+  },
+  "item": [
+    {
+      "name": "1. Cuenta y credenciales",
+      "description": "Verificar la API key, consultar la cuenta del integrador y el consumo del período.",
+      "item": [
+        {
+          "name": "Verifica las credenciales (X-API-Key + X-API-Secret)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Datos del integrador autenticado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consumo del mes (comprobantes por tipo y facturables)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/account/usage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "usage"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Certificados de firma",
+      "description": "Cargar, listar, probar y eliminar los certificados .p12 con que se firma cada emisor.",
+      "item": [
+        {
+          "name": "Lista certificados del integrador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/certificates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "certificates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sube (o reemplaza) un certificado PKCS#12",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/certificates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "certificates"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de un certificado (sin binario ni contraseñas)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/certificates/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "certificates",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elimina/revoca un certificado",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/certificates/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "certificates",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prueba el certificado contra Hacienda (no emite ni consume cuota)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/certificates/{id}/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "certificates",
+                ":id",
+                "test"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Emisión de comprobantes",
+      "description": "Emitir comprobantes, consultar estado y descargar XML, PDF y respuesta de Hacienda.",
+      "item": [
+        {
+          "name": "Emitir",
+          "item": [
+            {
+              "name": "Emite Factura Electrónica (01)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/factura",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "factura"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Tiquete Electrónico (04)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/tiquete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "tiquete"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Nota de Crédito (03)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "nota-credito"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Nota de Débito (02)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/nota-debito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "nota-debito"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Recibo Electrónico de Pago (REP, 10)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/recibo-pago",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "recibo-pago"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Factura Electrónica de Compra (08)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/factura-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "factura-compra"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Emite Factura Electrónica de Exportación (09)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/factura-exportacion",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "factura-exportacion"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Envía Mensaje Receptor (05 / 06 / 07)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/mensaje-receptor",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "mensaje-receptor"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Consulta y descargas",
+          "item": [
+            {
+              "name": "Lista documentos del integrador",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Detalle de un documento",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Búsqueda por clave de 50 caracteres",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/clave/{clave}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    "clave",
+                    ":clave"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Descarga el XML firmado",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/xml",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "xml"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Descarga el XML de respuesta de Hacienda",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/xml-respuesta",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "xml-respuesta"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Descarga la representación PDF (generada on-demand)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "pdf"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Mensaje Receptor entrante del documento",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/receiver-mr",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "receiver-mr"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Descarga el XML del Mensaje Receptor entrante",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/receiver-mr/xml",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "receiver-mr",
+                    "xml"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Fuerza re-consulta de estado a Hacienda",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "refresh"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reintenta el envío de un documento fallido",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/reenviar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "reenviar"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reenvía el comprobante por email al receptor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-API-Key",
+                    "value": "{{apiKey}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-API-Secret",
+                    "value": "{{apiSecret}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/{id}/reenviar-email",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":id",
+                    "reenviar-email"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Emisores y consecutivos",
+      "description": "Configurar emisor, consecutivos, reserva de clave POS y branding PDF.",
+      "item": [
+        {
+          "name": "Reserva clave + consecutivo para impresión POS",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clave/reserve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clave",
+                "reserve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Configura consecutivo, sucursal/terminal y ubicación del emisor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emisores/{legalId}/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "emisores",
+                ":legalId",
+                "config"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fija manualmente el contador de consecutivo del emisor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emisores/{legalId}/consecutivo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "emisores",
+                ":legalId",
+                "consecutivo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Preview del próximo consecutivo (sin incrementar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emisores/{legalId}/consecutivo/next",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "emisores",
+                ":legalId",
+                "consecutivo",
+                "next"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Branding del PDF propio del emisor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emisores/{legalId}/branding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "emisores",
+                ":legalId",
+                "branding"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Configura el branding del PDF del emisor (logo, info de pago, contacto)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/emisores/{legalId}/branding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "emisores",
+                ":legalId",
+                "branding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Catálogo CABYS",
+      "description": "Búsqueda en el Catálogo de Bienes y Servicios.",
+      "item": [
+        {
+          "name": "Búsqueda en el catálogo CABYS",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/catalogs/cabys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "catalogs",
+                "cabys"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Webhooks",
+      "description": "Registrar endpoints que reciben el veredicto de Hacienda (HMAC-SHA256).",
+      "item": [
+        {
+          "name": "Lista endpoints suscritos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crea un endpoint (el `secret` se muestra UNA sola vez)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualiza un endpoint",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks",
+                ":id"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elimina un endpoint",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Envía un evento de prueba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/{id}/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks",
+                ":id",
+                "test"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historial de entregas de un endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-API-Secret",
+                "value": "{{apiSecret}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/{id}/deliveries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhooks",
+                ":id",
+                "deliveries"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.facturaencr.com/v2/efactura",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "pk_live_xxxxxxxxxxxxxxxxxxxxx",
+      "type": "string"
+    },
+    {
+      "key": "apiSecret",
+      "value": "sk_live_xxxxxxxxxxxxxxxxxxxxx",
+      "type": "string"
+    }
+  ]
+}
