@@ -15,28 +15,46 @@ Platform es un monorepo real:
 ## Diagrama de actores
 
 ```mermaid
-flowchart LR
-  User[Usuario]
-  Web[web React]
-  Api[api Spring Boot]
-  Db[(Postgres o H2)]
-  Onvo[ONVO API]
-  Wh[Webhook ONVO]
+flowchart TB
+  subgraph Cliente["Cliente"]
+    U["Usuario"]
+    W["web · React<br/>Vite :5173"]
+  end
 
-  User --> Web
-  Web -->|"Bearer session + publishable key"| Api
-  Web -->|"SDK tokeniza tarjeta"| Onvo
-  Api -->|"Secret key"| Onvo
-  Api --> Db
-  Onvo -->|"eventos"| Wh
-  Wh --> Api
+  subgraph Platform["Platform"]
+    A["api · Spring Boot<br/>:8080"]
+    DB[("Postgres / H2<br/>users · sessions · …")]
+  end
+
+  subgraph Externos["Externos"]
+    G["Google<br/>ID token"]
+    O["ONVO API"]
+  end
+
+  U --> W
+  W -->|"Bearer session"| A
+  W -.->|"publishable key · SDK"| O
+  W -.->|"GIS credential"| G
+  G -.->|"verifica en server"| A
+  A -->|"secret key"| O
+  A --> DB
+  O -->|"webhook firmado"| A
+
+  classDef client fill:#e8f4fc,stroke:#2b6cb0,color:#1a365d
+  classDef server fill:#e6ffed,stroke:#2f855a,color:#22543d
+  classDef ext fill:#fff5e6,stroke:#c05621,color:#7b341e
+  classDef db fill:#faf5ff,stroke:#6b46c1,color:#44337a
+  class W,U client
+  class A server
+  class G,O ext
+  class DB db
 ```
 
 ## Separación de responsabilidades
 
 | Pregunta | Quién responde |
 |----------|----------------|
-| ¿El usuario está logueado en Platform? | `api` (sesiones) + `web` (token) |
+| ¿El usuario está logueado en Platform? | `api` (sesiones) + `web` (token) — detalle en [09-auth-y-sesiones](09-auth-y-sesiones.md) |
 | ¿Cómo se ve el plan de membresía? | `web` UI + catálogo en `api` DB |
 | ¿Dónde vive el número de tarjeta? | **Solo en ONVO** (tokenizado) |
 | ¿Se puede cobrar? | `api` con secret key → ONVO |
@@ -55,10 +73,13 @@ Hoy ya tenés un patrón igual con Google:
 
 **Idea clave:** el Controller no habla con Google/ONVO directo; un **adaptador** lo hace.
 
+Tour completo del login ya implementado: [09-auth-y-sesiones.md](09-auth-y-sesiones.md).
+
 ## Flujo mental de un cobro (vista de capas)
 
 ```mermaid
 sequenceDiagram
+  autonumber
   participant U as Usuario
   participant W as Web
   participant A as PlatformAPI

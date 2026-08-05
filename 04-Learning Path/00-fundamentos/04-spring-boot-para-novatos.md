@@ -21,13 +21,26 @@ En Platform el entrypoint es `ApiApplication.java`. Al arrancar, Spring:
 
 ```mermaid
 flowchart TB
-  C[Controller HTTP]
-  S[Service negocio]
-  R[Repository DB]
-  O[OnvoClient HTTP externo]
+  subgraph HTTP["Entrada"]
+    C["Controller<br/>DTO in/out"]
+  end
+  subgraph Negocio["Negocio"]
+    S["Service<br/>orquestación"]
+  end
+  subgraph Datos["Datos / externos"]
+    R["Repository<br/>JPA / DB"]
+    O["OnvoClient<br/>HTTP externo"]
+  end
   C --> S
   S --> R
   S --> O
+
+  classDef in fill:#e8f4fc,stroke:#2b6cb0,color:#1a365d
+  classDef mid fill:#e6ffed,stroke:#2f855a,color:#22543d
+  classDef out fill:#fff5e6,stroke:#c05621,color:#7b341e
+  class C in
+  class S mid
+  class R,O out
 ```
 
 | Capa | Anotación típica | Responsabilidad |
@@ -102,6 +115,8 @@ Con `ddl-auto: validate`, **Hibernate no crea tablas**: Flyway es la fuente de v
 
 ## Cómo Platform ya autentica
 
+Resumen (detalle + diagramas + tour de archivos → **[09-auth-y-sesiones.md](09-auth-y-sesiones.md)**):
+
 1. Login → `AuthService` crea session + token opaco.
 2. Front guarda token y manda `Authorization: Bearer …`.
 3. `JwtOrSessionAuthenticationFilter` valida el token contra la tabla `sessions`.
@@ -115,10 +130,10 @@ Usá el mismo estilo que `GlobalExceptionHandler` / Problem Details. No inventes
 
 ## Mini-ejercicio mental
 
-Antes de S01, respondé:
+Antes de seguir, respondé:
 
 1. ¿Qué es un bean?
 2. ¿Por qué el Service existe si el Controller podría llamar al Repository?
 3. ¿Dónde pondrías la llamada HTTP a ONVO?
 
-Si podés responder, seguí a [05-http-rest-y-estados.md](05-http-rest-y-estados.md).
+Si podés responder, seguí a [09-auth-y-sesiones.md](09-auth-y-sesiones.md) y después [05-http-rest-y-estados.md](05-http-rest-y-estados.md).

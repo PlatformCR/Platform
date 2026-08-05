@@ -42,6 +42,10 @@ Términos que vas a ver una y otra vez. Si no entendés una palabra en un spring
 | **@Transactional** | Marca un bloque que debe ser atómico en DB. No lo abras alrededor de HTTP externo largo. |
 | **Problem Details** | Formato estándar de errores HTTP (RFC 7807) que usa Platform. |
 | **Filter (Security)** | Intercepta requests antes del controller (ej. validar Bearer token). |
+| **Opaque token** | Token random (no JWT self-contained). El server guarda el hash y puede revocarlo. |
+| **token_hash** | SHA-256 del access token en la tabla `sessions`. Nunca el token crudo en DB. |
+| **issueSession** | Método de `AuthService` que revoca otras sesiones, crea una nueva y devuelve el token. |
+| **GIS** | Google Identity Services: botón / One Tap que entrega un ID token al front. |
 
 ## Frontend
 
@@ -49,9 +53,11 @@ Términos que vas a ver una y otra vez. Si no entendés una palabra en un spring
 |---------|-------------------|
 | **Vite** | Bundler/dev server del front. |
 | **React Context** | Estado compartido (ej. usuario logueado). |
+| **AuthProvider** | Context que guarda user + token y hace bootstrap con `/me`. |
 | **ProtectedRoute** | Ruta que exige sesión. |
 | **SDK ONVO** | Librería JS que tokeniza/cobrá en el browser con publishable key. |
 | **Env `VITE_*`** | Variables expuestas al front en build time. **Nunca** pongas secrets ahí. |
+| **Bearer (sesión)** | Header `Authorization: Bearer <accessToken>` de Platform — distinto a la secret key de ONVO. |
 
 ## Proceso
 

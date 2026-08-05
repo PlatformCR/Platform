@@ -57,6 +57,8 @@ POST https://api.onvopay.com/v1/subscriptions
 Authorization: Bearer onvo_test_secret_key_...
 ```
 
+Mismo header `Authorization: Bearer …`, **dos secretos distintos**: sesión de usuario vs secret key de ONVO. Ver [09-auth-y-sesiones](09-auth-y-sesiones.md) y [03-keys-y-secretos](03-keys-y-secretos.md).
+
 El front **no** necesita conocer todos los campos crudos de ONVO. Traducí a DTOs claros.
 
 ## Postman en este path

@@ -12,7 +12,7 @@ No es solo documentación de pagos: cada **spring** termina una funcionalidad ve
 
 ## Cómo usar este path
 
-1. Leé [00-fundamentos/](00-fundamentos/) empezando por [01](00-fundamentos/01-como-aprender.md) y **[08-ritmo-2h](00-fundamentos/08-ritmo-2h.md)** (obligatorio).
+1. Leé [00-fundamentos/](00-fundamentos/) empezando por [01](00-fundamentos/01-como-aprender.md) y **[08-ritmo-2h](00-fundamentos/08-ritmo-2h.md)** (obligatorio). Incluí [09-auth-y-sesiones](00-fundamentos/09-auth-y-sesiones.md) antes de S00.
 2. Seguí el calendario por **sesiones de 2 h**, no por “terminar el spring hoy”.
 3. Abrí el spring actual → sección **Sesiones (~2 h)**.
 4. Teach-back al cerrar cada sesión · marcá [progress.md](progress.md).
@@ -20,39 +20,64 @@ No es solo documentación de pagos: cada **spring** termina una funcionalidad ve
 
 **Regla de oro:** no saltees springs. No fusiones 3 sesiones en una noche.
 
-**Expectativa honesta:** core S00–S07 ≈ **6 semanas**; path completo ≈ **9–11 semanas** (con buffers).
+**Expectativa honesta:** core S00–S07 ≈ **6 semanas**; path completo ≈ **9–11 semanas** (con buffers). Auth ya está en el repo: lo **estudiás**, no lo reescribís.
 
 ---
 
 ## Mapa de springs
 
 ```mermaid
-flowchart TD
-  S00[S00 Lab y keys] --> S01[S01 OnvoClient Spring]
-  S01 --> S02[S02 Clientes]
-  S02 --> S03[S03 Metodos de pago y SDK]
-  S03 --> S04[S04 Payment Intents]
-  S04 --> S05[S05 Webhooks]
-  S01 --> S06[S06 Productos y Precios]
-  S05 --> S07[S07 Membresias]
-  S06 --> S07
+flowchart TB
+  subgraph Prep["Fase 0"]
+    F["Fundamentos<br/>incl. auth 09"]
+    S00["S00 Lab + tour auth"]
+  end
+
+  subgraph Core["Core pagos"]
+    S01["S01 OnvoClient"]
+    S02["S02 Clientes"]
+    S03["S03 Métodos + SDK"]
+    S04["S04 Intents"]
+    S05["S05 Webhooks"]
+    S06["S06 Productos"]
+    S07["S07 Membresías"]
+  end
+
+  subgraph Extra["Amplitud → live"]
+    S08["S08 Checkout"]
+    S09["S09 Cupones"]
+    S10["S10 Reembolsos"]
+    S11["S11 3DS"]
+    S12["S12 SINPE"]
+    S13["S13 Marketplaces"]
+    S14["S14 Live"]
+  end
+
+  F --> S00 --> S01 --> S02 --> S03 --> S04 --> S05 --> S07
+  S01 --> S06 --> S07
   S03 --> S07
-  S05 --> S08[S08 Checkout Sessions]
-  S08 --> S09[S09 Cupones y envios]
-  S04 --> S10[S10 Reembolsos]
+  S05 --> S08 --> S09
+  S04 --> S10
   S07 --> S10
-  S04 --> S11[S11 3DS y fraude]
-  S05 --> S12[S12 SINPE]
-  S07 --> S13[S13 Marketplaces]
-  S10 --> S14[S14 Live y hardening]
+  S04 --> S11
+  S05 --> S12
+  S07 --> S13
+  S10 --> S14
   S11 --> S14
   S12 --> S14
   S13 --> S14
+
+  classDef prep fill:#e8f4fc,stroke:#2b6cb0,color:#1a365d
+  classDef core fill:#e6ffed,stroke:#2f855a,color:#22543d
+  classDef extra fill:#fff5e6,stroke:#c05621,color:#7b341e
+  class F,S00 prep
+  class S01,S02,S03,S04,S05,S06,S07 core
+  class S08,S09,S10,S11,S12,S13,S14 extra
 ```
 
 | Spring | Tema | Sesiones ~2h | Resultado |
 |--------|------|--------------|-----------|
-| [S00](springs/S00-laboratorio-y-keys.md) | Laboratorio y keys | 1 | Env + Postman |
+| [S00](springs/S00-laboratorio-y-keys.md) | Laboratorio, keys y tour auth | 2 | Env + Postman + entender login |
 | [S01](springs/S01-cliente-onvo-en-spring.md) | Cliente HTTP ONVO | 2 | Spring ↔ ONVO |
 | [S02](springs/S02-clientes.md) | Clientes | 3 | Customer + UI |
 | [S03](springs/S03-metodos-de-pago-y-sdk.md) | Métodos de pago + SDK | 3 | Tarjeta tokenizada |
@@ -89,8 +114,10 @@ flowchart TD
 | [../web/](../web/) | Frontend Vite + React |
 | [../03-ONVO Pay/](../03-ONVO%20Pay/) | Docs ONVO cacheadas + Postman |
 | [../00-Planning/07-payments-memberships.md](../00-Planning/07-payments-memberships.md) | Diseño de membresías MVP3 |
+| [../00-Planning/03-security.md](../00-Planning/03-security.md) | Spec de sesiones / auth |
 | [../00-Planning/02-springboot.md](../00-Planning/02-springboot.md) | Convenciones Spring del proyecto |
 | [../01-Project Instructions/HOW-TO-RUN.md](../01-Project%20Instructions/HOW-TO-RUN.md) | Cómo levantar el entorno |
+| [00-fundamentos/09-auth-y-sesiones.md](00-fundamentos/09-auth-y-sesiones.md) | Tour del login ya implementado |
 
 ---
 

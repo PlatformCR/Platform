@@ -12,6 +12,7 @@ Ritmo: [08-ritmo-2h.md](00-fundamentos/08-ritmo-2h.md).
 - [ ] F1 — [01](00-fundamentos/01-como-aprender.md) + [02](00-fundamentos/02-mapa-del-sistema.md)
 - [ ] F2 — [03](00-fundamentos/03-keys-y-secretos.md) keys
 - [ ] F3 — [04](00-fundamentos/04-spring-boot-para-novatos.md) Spring
+- [ ] F-Auth — [09](00-fundamentos/09-auth-y-sesiones.md) auth y sesiones (código ya existente)
 - [ ] F4 — [05](00-fundamentos/05-http-rest-y-estados.md) + [06](00-fundamentos/06-testing-en-plataforma.md) + [07](00-fundamentos/07-plantilla-sdlc.md)
 - [ ] Leí [08-ritmo-2h](00-fundamentos/08-ritmo-2h.md)
 
@@ -19,8 +20,9 @@ Ritmo: [08-ritmo-2h.md](00-fundamentos/08-ritmo-2h.md).
 
 ## Fase 1 — Core
 
-### S00 — Lab (1 sesión)
-- [ ] S00.1 laboratorio
+### S00 — Lab + tour auth (2 sesiones)
+- [ ] S00.1 laboratorio + keys + Postman
+- [ ] S00.2 tour auth (issueSession + Filter + Network)
 - [ ] Spring S00 cerrado
 
 ### S01 — OnvoClient (2)

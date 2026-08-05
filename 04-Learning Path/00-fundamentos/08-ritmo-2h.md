@@ -42,25 +42,26 @@ Si no podés hacer (1) y (2), **no avanzás de sesión**: mañana repetís o ach
 
 ## Calendario orientativo (~2 h/día)
 
-Totales reales: **~45–55 sesiones** (~9–11 semanas si no fallás días).  
-Hay **buffers** metidos: la vida pasa.
+Totales reales: **~47–57 sesiones** (~9–11 semanas si no fallás días).  
+Hay **buffers** metidos: la vida pasa. Incluye **F-Auth** + S00 con 2 sesiones.
 
-### Fase 0 — Fundamentos (Sesiones F1–F4)
+### Fase 0 — Fundamentos (Sesiones F1–F4 + F-Auth)
 
 | Sesión | Qué | Meta de cierre |
 |--------|-----|----------------|
 | **F1** | [01](01-como-aprender.md) + [02](02-mapa-del-sistema.md) | Dibujás de memoria el diagrama actores |
 | **F2** | [03](03-keys-y-secretos.md) keys | Decís qué key va dónde sin mirar |
 | **F3** | [04](04-spring-boot-para-novatos.md) Spring | Explicás Controller → Service → Repo |
+| **F-Auth** | [09](09-auth-y-sesiones.md) auth existente | Teach-back: token_hash, Google verifier, una sesión |
 | **F4** | [05](05-http-rest-y-estados.md) + [06](06-testing-en-plataforma.md) + [07](07-plantilla-sdlc.md) | Sabés qué es idempotencia + DoD |
 
-**Reto F:** explicarle a alguien (o a una nota de voz) el mapa del sistema en 90 segundos.
+**Reto F:** explicarle a alguien (o a una nota de voz) el mapa del sistema + “cómo entro a Platform” en ~2 minutos.
 
-### Fase 1 — Core de pagos (S00–S07) ≈ 28–32 sesiones
+### Fase 1 — Core de pagos (S00–S07) ≈ 29–33 sesiones
 
 | Spring | Sesiones | Semana aprox. |
 |--------|----------|---------------|
-| S00 Lab | 1 | Semana 1 |
+| S00 Lab + tour auth | 2 | Semana 1 |
 | S01 OnvoClient | 2 | Semana 1 |
 | S02 Clientes | 3 | Semana 2 |
 | S03 Métodos de pago | 3 | Semana 2–3 |
@@ -94,8 +95,8 @@ Checklist live + runbook. Sin apuro de cobrar dinero real el mismo día.
 
 | Semana | Enfoque | Sensación esperada |
 |--------|---------|-------------------|
-| 0 | Fundamentos F1–F4 | “Entiendo el mapa” |
-| 1 | S00 + S01 | “Spring habla con ONVO” |
+| 0 | Fundamentos F1–F4 + F-Auth | “Entiendo el mapa y el login” |
+| 1 | S00 (lab + tour auth) + S01 | “Spring habla con ONVO” |
 | 2 | S02 + arranque S03 | “Tengo customer” |
 | 3 | S03 fin + S04 | “Cobré una vez” |
 | 4 | S05 (+ buffer) | “El webhook manda” |

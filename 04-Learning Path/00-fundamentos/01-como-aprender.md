@@ -66,6 +66,8 @@ Podés explicar sin mirar el código:
 5. Qué ve el usuario en la UI.
 6. Cómo un webhook podría cambiar el estado después.
 
+Antes de cobros, también: cómo entrás a Platform (login / Google / Bearer / `sessions`). Ver [09-auth-y-sesiones](09-auth-y-sesiones.md).
+
 ## Retarte (sin subestimarte)
 
 Al final de cada spring hay **Base / Reto / Boss**.
